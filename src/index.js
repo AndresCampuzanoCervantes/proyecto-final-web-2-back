@@ -1,16 +1,11 @@
 const express = require("express");
-const cors = require("cors");
 const fs = require("fs");
 const https = require("https");
 const app = express();
 const { config } = require("./config/index");
 const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
-const compression = require("compression");
 
-app.use(cors());
 app.use(express.json());
-app.use(compression());
 app.set("key", config.secret);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
