@@ -6,6 +6,7 @@ const { config } = require("./config/index");
 const bodyParser = require("body-parser");
 const userApi = require("./routes/users");
 const ParameterApi = require("./routes/parameter");
+const FilmsApi = require("./routes/Films");
 
 app.use(express.json());
 app.set("key", config.secret);
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 
 userApi(app);
 ParameterApi(app);
+FilmsApi(app);
 
 if (config.dev) {
     app.listen(config.port, function () {
