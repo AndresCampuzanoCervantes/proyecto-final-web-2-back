@@ -23,7 +23,8 @@
     "dotenv": "^10.0.0",
     "crypto-js": "^4.1.1",
     "sequelize": "^7.0.0-alpha.3",
-    "moment": "^2.29.3"
+    "moment": "^2.29.3",
+    "mysql2": "^2.3.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

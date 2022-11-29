@@ -1,33 +1,40 @@
+
 "use strict";
 module.exports = (sequelize, DataTypes) => {
-    const Usuarios = sequelize.define(
-        "Usuarios",
+    const Peliculas = sequelize.define(
+        "Peliculas",
         {
             id: {
                 type: DataTypes.BIGINT(20),
                 primaryKey: true,
                 autoIncrement: true,
             },
-            documento: {
-                type: DataTypes.STRING(500),
+            id_lista_pelicula: {
+                type: DataTypes.BIGINT(20),
+                allowNull: false,
             },
-            nombres: {
+            id_pelicula:{
+                type: DataTypes.BIGINT(20),
+                allowNull: false,
+            },
+            nombre: {
                 type: DataTypes.STRING(500),
                 allowNull: false,
             },
-            apellidos: {
+            path_imagen: {
                 type: DataTypes.STRING(500),
                 allowNull: false,
             },
-            email: {
-                type: DataTypes.STRING(500),
+            sinopsis :{
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+            fecha_lanzamiento :{
+                type: DataTypes.DATE,
                 allowNull: false,
             },
-            telefono: {
-                type: DataTypes.STRING(500),
-            },
-            password: {
-                type: DataTypes.STRING(500),
+            view_ED_parametro:{
+                type: DataTypes.BIGINT(20),
                 allowNull: false,
             },
             estado: {
@@ -37,17 +44,17 @@ module.exports = (sequelize, DataTypes) => {
             },
         },
         {
-            tableName: "pw_usuarios",
+            tableName: "pw_peliculas",
             timestamps: false,
         }
     );
 
-    Usuarios.associate = function (models) {
-        Usuarios.hasMany(models.ListasPeliculas, {
-            foreignKey: "id_usuario",
+    Peliculas.associate = function (models) {
+        Peliculas.belongsTo(models.ListasPeliculas, {
+            foreignKey: "id_lista_pelicula",
             as: "ListasPeliculas",
         });
     };
 
-    return Usuarios;
+    return Peliculas;
 };

@@ -13,8 +13,8 @@ const userApi = (app) => {
             res.status(200).json({
                 user,
                 message: user
-                    ? "Usuario encontrado"
-                    : "No se encontró ningún usuario con ese ID",
+                    ? "User finded."
+                    : "A user with this Id wasn't found.",
             });
         } catch (err) {
             next(err);
@@ -30,8 +30,8 @@ const userApi = (app) => {
                 users,
                 message:
                     users.length > 0
-                        ? "Usuarios listados"
-                        : "No se encontraron registros",
+                        ? "listed users."
+                        : "registers not finded.",
             });
         } catch (err) {
             next(err);
@@ -86,24 +86,6 @@ const userApi = (app) => {
             const user = await UserService.signin(data);
             res.status(201).json({
                 user,
-            });
-        } catch (error) {
-            next(error);
-        }
-    });
-
-    router.put("/changePassword/:userId", async function (req, res, next) {
-        const { body: data } = req;
-        const { userId } = req.params;
-
-        try {
-            const userUpdated = await UserService.changePassword({
-                ...data,
-                userId,
-            });
-
-            res.status(201).json({
-                userUpdated,
             });
         } catch (error) {
             next(error);

@@ -4,12 +4,16 @@ const https = require("https");
 const app = express();
 const { config } = require("./config/index");
 const bodyParser = require("body-parser");
+const userApi = require("./routes/users");
+const ParameterApi = require("./routes/parameter");
 
 app.use(express.json());
 app.set("key", config.secret);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+userApi(app);
+ParameterApi(app);
 
 if (config.dev) {
     app.listen(config.port, function () {
