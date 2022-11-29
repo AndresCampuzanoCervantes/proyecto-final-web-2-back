@@ -67,10 +67,8 @@ const userApi = (app) => {
 
     router.delete("/:userId", async function (req, res, next) {
         const { userId } = req.params;
-        const { body: data } = req;
-
         try {
-            const userDeleted = await UserService.deleteUser(userId, data);
+            const userDeleted = await UserService.deleteUser(userId);
 
             res.status(200).json({
                 userId: userDeleted,
