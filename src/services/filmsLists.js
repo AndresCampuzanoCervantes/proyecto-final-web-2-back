@@ -1,6 +1,7 @@
 const {
     sequelize,
     ListaPeliculas: filmsListsModel,
+    Peliculas: filmsModel,
 } = require("../models");
 const { createMovie } = require("./films");
 
@@ -72,7 +73,7 @@ const createFilmsLists = async (filmsListsData) => {
             await t.rollback();
             return {
                 success: false,
-                message: "la pelicula ya se encuentra registrada en esta lista.",
+                message: "La lista de pelicula ya se encuentra registrada.",
             };
         }
     } catch (error) {
@@ -81,20 +82,20 @@ const createFilmsLists = async (filmsListsData) => {
     }
 }
 
-const updateFilmsLists = async (movieData, movieId) => {
+const updateFilmsLists = async (filmsListData, filmsListId) => {
     const t = await sequelize.transaction();
 
     try {
-        const movie = await filmsListsModel.findOne({
+        const filmsList = await filmsListsModel.findOne({
             where: {
-                id: movieId,
+                id: filmsListId,
                 estado: 1,
             },
         });
 
-        if (movie) {
+        if (filmsList) {
             await filmsListsModel.update(
-                { ...movieData },
+                { ...filmsListData },
                 {
                     where: {
                         id: userId,
@@ -104,19 +105,19 @@ const updateFilmsLists = async (movieData, movieId) => {
             );
             await t.commit();
 
-            const movieUpdated = await filmsListsModel.findOne({
+            const filmsListUpdated = await filmsListsModel.findOne({
                 where: { id: userId, estado: 1 },
             });
 
             return {
                 success: true,
-                movieUpdated,
+                filmsListUpdated,
             };
 
         } else {
             return {
                 success: false,
-                message: "la pelicula no se encuentra registrada en esta lista.",
+                message: "La pelicula no se encuentra registrada en esta lista.",
             };
         }
     } catch (error) {
@@ -125,7 +126,7 @@ const updateFilmsLists = async (movieData, movieId) => {
     }
 }
 
-const deleteFilmsLists = async (movieId) => {
+const deleteFilmsLists = async (filmsListId) => {
     const t = await sequelize.transaction();
 
     try {
@@ -135,14 +136,26 @@ const deleteFilmsLists = async (movieId) => {
             },
             {
                 where: {
-                    id: movieId,
+                    id: filmsListId,
+                },
+                transaction: t,
+            }
+        );
+        
+        await filmsModel.update(
+            {
+                estado: -1,
+            },
+            {
+                where: {
+                    id_lista_pelicula: filmsListId,
                 },
                 transaction: t,
             }
         );
 
         await t.commit();
-        return { success: true, movieId };
+        return { success: true, filmsListId };
     } catch (error) {
         await t.rollback();
         throw new Error(error);
@@ -153,5 +166,5 @@ module.exports = {
     getFilmsLists,
     createFilmsLists,
     updateFilmsLists,
-    deleteFilmsLists,
+    deleteFilmsLists
 };
