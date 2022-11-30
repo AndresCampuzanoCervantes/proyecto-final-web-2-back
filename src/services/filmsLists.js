@@ -1,52 +1,69 @@
 const {
     sequelize,
-    Peliculas: filmsModel,
+    ListaPeliculas: filmsListsModel,
 } = require("../models");
+const { createMovie } = require("./films");
 
-const getMovie = async (id) => {
-    const movie = await filmsModel.findOne({
-        where: {
-            id,
-            estado: 1,
-        },
-    });
-    return movie;
-}
-
-const getFilms = async (where) => {
-    const films = await filmsModel.findAll({
+const getFilmsLists = async (where) => {
+    const films = await filmsListsModel.findAll({
         where: { estado: 1, ...where },
         order: [["id", "DESC"]]
     });
     return films;
 }
 
-const createMovie = async (movieData) => {
+const createFilmsLists = async (filmsListsData) => {
     const t = await sequelize.transaction();
 
     try {
-        let movieID = null;
-        if (movieData.nombre !== "") {
-            movieID = await filmsModel.findOne({
+        let filmsListsID = null;
+        let movieList = [];
+        if (filmsListsData.nombre !== "") {
+            filmsListsID = await filmsListsModel.findOne({
                 where: {
-                    id_pelicula: movieData.id_pelicula,
-                    id_lista_pelicula: movieData.id_lista_pelicula,
+                    id_usuario: filmsListsData.id_usuario,
+                    nombre: filmsListsData.nombre,
                     estado: 1,
                 },
             });
         }
 
-        if (!movieID) {
-            const { id: newMovie } = await filmsModel.create(
+        if (filmsListsData.movieList.length > 0) {
+            delete filmsListsData.movieList;
+        }
+
+        if (!filmsListsID) {
+            const { id: newMovie } = await filmsListsModel.create(
                 {
-                    ...movieData,
-                    view_ED_parametro:1
+                    ...filmsListsData
                 },
                 {
                     transaction: t,
                 }
             );
             await t.commit();
+
+            if (movieList.length > 0) {
+                await Promise.all(
+                    movieList.map(async (e) => {
+                        let current = {
+                            estado: 1,
+                            id_lista_pelicula: newMovie,
+                            id_pelicula: e.id_pelicula,
+                            path_imagen: e.path_imagen,
+                            sinopsis: e.sinopsis,
+                            fecha_lanzamiento: e.fecha_lanzamiento,
+                            view_ED_parametro: 1,
+                        };
+                        return createMovie(
+                            current,
+                            {
+                                transaction: t,
+                            }
+                        );
+                    })
+                )
+            }
             return {
                 success: true,
                 newMovie,
@@ -64,11 +81,11 @@ const createMovie = async (movieData) => {
     }
 }
 
-const updateMovie = async (movieData, movieId) => {
+const updateFilmsLists = async (movieData, movieId) => {
     const t = await sequelize.transaction();
 
     try {
-        const movie = await filmsModel.findOne({
+        const movie = await filmsListsModel.findOne({
             where: {
                 id: movieId,
                 estado: 1,
@@ -76,7 +93,7 @@ const updateMovie = async (movieData, movieId) => {
         });
 
         if (movie) {
-            await filmsModel.update(
+            await filmsListsModel.update(
                 { ...movieData },
                 {
                     where: {
@@ -87,7 +104,7 @@ const updateMovie = async (movieData, movieId) => {
             );
             await t.commit();
 
-            const movieUpdated = await filmsModel.findOne({
+            const movieUpdated = await filmsListsModel.findOne({
                 where: { id: userId, estado: 1 },
             });
 
@@ -108,11 +125,11 @@ const updateMovie = async (movieData, movieId) => {
     }
 }
 
-const deleteMovie = async (movieId) => {
+const deleteFilmsLists = async (movieId) => {
     const t = await sequelize.transaction();
 
     try {
-        await filmsModel.update(
+        await filmsListsModel.update(
             {
                 estado: -1,
             },
@@ -133,9 +150,8 @@ const deleteMovie = async (movieId) => {
 }
 
 module.exports = {
-    getMovie,
-    getFilms,
-    createMovie,
-    updateMovie,
-    deleteMovie,
+    getFilmsLists,
+    createFilmsLists,
+    updateFilmsLists,
+    deleteFilmsLists,
 };
