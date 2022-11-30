@@ -1,7 +1,7 @@
 const expresss = require("express");
 const filmsListsService = require("../services/filmsLists");
 
-const filmsListsApi = (app) => {
+const FilmsListsApi = (app) => {
     const router = expresss.Router();
     app.use("/films", router);
 
@@ -65,4 +65,4 @@ const filmsListsApi = (app) => {
 
 }
 
-module.exports = filmsListsApi;
+module.exports = FilmsListsApi;

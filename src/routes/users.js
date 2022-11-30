@@ -1,7 +1,7 @@
 const expresss = require("express");
 const UserService = require("../services/users");
 
-const userApi = (app) => {
+const UserApi = (app) => {
     const router = expresss.Router();
     app.use("/user", router);
 
@@ -91,4 +91,4 @@ const userApi = (app) => {
     });
 }
 
-module.exports = userApi;
+module.exports = UserApi;
