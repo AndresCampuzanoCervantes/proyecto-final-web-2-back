@@ -8,7 +8,10 @@ const UserApi = require("./routes/users");
 const ParameterApi = require("./routes/parameter");
 const FilmsApi = require("./routes/Films");
 const FilmsListsApi = require("./routes/filmsLists");
+const cors = require('cors');
 
+
+app.use(cors())
 app.use(express.json());
 app.set("key", config.secret);
 app.use(bodyParser.urlencoded({ extended: true }));

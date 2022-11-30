@@ -176,14 +176,7 @@ const signin = async (data) => {
     const t = await sequelize.transaction();
     try {
         const user = await userModel.findOne({
-            where: { email: data.email, estado: 1 },
-            include: [
-                {
-                    model: userGroupModel,
-                    as: "grupoUsuarios",
-                    where: { estado: 1 },
-                },
-            ],
+            where: { email: data.email, estado: 1 }
         });
 
         if (user) {
@@ -191,7 +184,8 @@ const signin = async (data) => {
                 await t.rollback();
                 return { success: false, message: "Contraseña incorrecta" };
             }
-
+            delete user.password;
+            delete user.dataValues.password;
             return { success: true, user};
         } else {
             return {
