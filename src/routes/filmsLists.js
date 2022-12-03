@@ -5,10 +5,9 @@ const FilmsListsApi = (app) => {
     const router = expresss.Router();
     app.use("/films", router);
 
-    router.post("/getFilms", async function (req, res, next) {
-        const { body: where } = req;
+    router.get("/getFilms", async function (req, res, next) {
         try {
-            const films = await filmsListsService.getFilmsLists(where);
+            const films = await filmsListsService.getFilmsLists();
 
             res.status(200).json({
                 films,
@@ -49,14 +48,14 @@ const FilmsListsApi = (app) => {
         }
     });
 
-    router.delete("/:movieId", async function (req, res, next) {
-        const { movieId } = req.params;
+    router.delete("/:filmsList", async function (req, res, next) {
+        const { filmsList } = req.params;
 
         try {
-            const userDeleted = await filmsListsService.deleteFilmsLists(movieId);
+            const filmsDeleted = await filmsListsService.deleteFilmsLists(filmsList);
 
             res.status(200).json({
-                movieId: userDeleted,
+                movieId: filmsDeleted,
             });
         } catch (error) {
             next(error);

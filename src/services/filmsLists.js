@@ -1,13 +1,13 @@
 const {
     sequelize,
-    ListaPeliculas: filmsListsModel,
+    ListasPeliculas: filmsListsModel,
     Peliculas: filmsModel,
 } = require("../models");
-const { createMovie } = require("./films");
+// const { createMovie } = require("./films");
 
-const getFilmsLists = async (where) => {
+const getFilmsLists = async () => {
     const films = await filmsListsModel.findAll({
-        where: { estado: 1, ...where },
+        where: { estado: 1,},
         order: [["id", "DESC"]]
     });
     return films;
@@ -18,7 +18,7 @@ const createFilmsLists = async (filmsListsData) => {
 
     try {
         let filmsListsID = null;
-        let movieList = [];
+        // let movieList = [];
         if (filmsListsData.nombre !== "") {
             filmsListsID = await filmsListsModel.findOne({
                 where: {
@@ -29,14 +29,15 @@ const createFilmsLists = async (filmsListsData) => {
             });
         }
 
-        if (filmsListsData.movieList.length > 0) {
-            delete filmsListsData.movieList;
-        }
+        // if (filmsListsData.movieList.length > 0) {
+        //     delete filmsListsData.movieList;
+        // }
 
         if (!filmsListsID) {
             const { id: newMovie } = await filmsListsModel.create(
                 {
-                    ...filmsListsData
+                    ...filmsListsData,
+                    estado:'1'
                 },
                 {
                     transaction: t,
@@ -44,27 +45,27 @@ const createFilmsLists = async (filmsListsData) => {
             );
             await t.commit();
 
-            if (movieList.length > 0) {
-                await Promise.all(
-                    movieList.map(async (e) => {
-                        let current = {
-                            estado: 1,
-                            id_lista_pelicula: newMovie,
-                            id_pelicula: e.id_pelicula,
-                            path_imagen: e.path_imagen,
-                            sinopsis: e.sinopsis,
-                            fecha_lanzamiento: e.fecha_lanzamiento,
-                            view_ED_parametro: 1,
-                        };
-                        return createMovie(
-                            current,
-                            {
-                                transaction: t,
-                            }
-                        );
-                    })
-                )
-            }
+            // if (movieList.length > 0) {
+            //     await Promise.all(
+            //         movieList.map(async (e) => {
+            //             let current = {
+            //                 estado: 1,
+            //                 id_lista_pelicula: newMovie,
+            //                 id_pelicula: e.id_pelicula,
+            //                 path_imagen: e.path_imagen,
+            //                 sinopsis: e.sinopsis,
+            //                 fecha_lanzamiento: e.fecha_lanzamiento,
+            //                 view_ED_parametro: 1,
+            //             };
+            //             return createMovie(
+            //                 current,
+            //                 {
+            //                     transaction: t,
+            //                 }
+            //             );
+            //         })
+            //     )
+            // }
             return {
                 success: true,
                 newMovie,
@@ -73,7 +74,7 @@ const createFilmsLists = async (filmsListsData) => {
             await t.rollback();
             return {
                 success: false,
-                message: "La lista de pelicula ya se encuentra registrada.",
+                message: "The movie list is already registered.",
             };
         }
     } catch (error) {
@@ -98,7 +99,7 @@ const updateFilmsLists = async (filmsListData, filmsListId) => {
                 { ...filmsListData },
                 {
                     where: {
-                        id: userId,
+                        id: filmsListId,
                     },
                     transaction: t,
                 }
@@ -106,7 +107,7 @@ const updateFilmsLists = async (filmsListData, filmsListId) => {
             await t.commit();
 
             const filmsListUpdated = await filmsListsModel.findOne({
-                where: { id: userId, estado: 1 },
+                where: { id: filmsListId, estado: 1 },
             });
 
             return {
@@ -117,7 +118,7 @@ const updateFilmsLists = async (filmsListData, filmsListId) => {
         } else {
             return {
                 success: false,
-                message: "La pelicula no se encuentra registrada en esta lista.",
+                message: "The film is not registered in this list.",
             };
         }
     } catch (error) {

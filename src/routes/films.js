@@ -3,7 +3,7 @@ const FilmsService = require("../services/films");
 
 const FilmsApi = (app) => {
     const router = expresss.Router();
-    app.use("/films", router);
+    app.use("/movie", router);
 
     router.get("/:movieId", async function (req, res, next) {
         const { movieId } = req.params;

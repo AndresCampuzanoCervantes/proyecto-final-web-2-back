@@ -26,7 +26,7 @@ const createMovie = async (movieData) => {
 
     try {
         let movieID = null;
-        if (movieData.nombre !== "") {
+        if (movieData.id_pelicula !== "") {
             movieID = await filmsModel.findOne({
                 where: {
                     id_pelicula: movieData.id_pelicula,
@@ -55,7 +55,7 @@ const createMovie = async (movieData) => {
             await t.rollback();
             return {
                 success: false,
-                message: "la pelicula ya se encuentra registrada en esta lista.",
+                message: "the film is already registered in this list.",
             };
         }
     } catch (error) {
@@ -80,7 +80,7 @@ const updateMovie = async (movieData, movieId) => {
                 { ...movieData },
                 {
                     where: {
-                        id: userId,
+                        id: movieId,
                     },
                     transaction: t,
                 }
@@ -88,7 +88,7 @@ const updateMovie = async (movieData, movieId) => {
             await t.commit();
 
             const movieUpdated = await filmsModel.findOne({
-                where: { id: userId, estado: 1 },
+                where: { id: movieId, estado: 1 },
             });
 
             return {
@@ -99,7 +99,7 @@ const updateMovie = async (movieData, movieId) => {
         } else {
             return {
                 success: false,
-                message: "la pelicula no se encuentra registrada en esta lista.",
+                message: "the film is not registered in this list.",
             };
         }
     } catch (error) {

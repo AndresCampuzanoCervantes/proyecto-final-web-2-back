@@ -60,14 +60,14 @@ const createUser = async (userData) => {
                 await t.rollback();
                 return {
                     success: false,
-                    message: "Ya existe un usuario con ese correo electrónico.",
+                    message: "There is already a user with that email.",
                 };
             }
         } else {
             await t.rollback();
             return {
                 success: false,
-                message: "Ya existe un usuario con ese documento.",
+                message: "A user with that document already exists.",
             };
         }
     } catch (error) {
@@ -98,18 +98,12 @@ const updateUser = async (userData, userId) => {
                 await t.rollback();
                 return {
                     success: false,
-                    message: "Ya existe un usuario con ese correo electrónico.",
+                    message: "There is already a user with that email.",
                 };
             }
         }
         let passwordCrypt = "";
 
-        if (userData.id_usuario_aprueba) {
-            await userApproveModel.create({
-                id_usuario_aprobado: userId,
-                id_usuario_aprueba: userData.id_usuario_aprueba,
-            });
-        }
 
         if (userData.password) {
             passwordCrypt = await bcrypt.hash(userData.password, 10);
@@ -130,13 +124,6 @@ const updateUser = async (userData, userId) => {
         await t.commit();
         const userUpdated = await userModel.findOne({
             where: { id: userId, estado: 1 },
-            include: [
-                {
-                    model: userGroupModel,
-                    as: "grupoUsuarios",
-                    where: { estado: 1 },
-                },
-            ],
         });
         return {
             success: true,
@@ -182,7 +169,7 @@ const signin = async (data) => {
         if (user) {
             if (!(await bcrypt.compare(data.password, user.password))) {
                 await t.rollback();
-                return { success: false, message: "Contraseña incorrecta" };
+                return { success: false, message: "Incorrect password." };
             }
             delete user.password;
             delete user.dataValues.password;
@@ -190,7 +177,7 @@ const signin = async (data) => {
         } else {
             return {
                 sucess: false,
-                message: "El usuario no ha sido creado o está inactivo",
+                message: "The user has not been created or is inactive",
             };
         }
     } catch (error) {
