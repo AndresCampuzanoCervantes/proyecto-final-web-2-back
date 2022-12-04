@@ -5,9 +5,9 @@ const {
 } = require("../models");
 // const { createMovie } = require("./films");
 
-const getFilmsLists = async () => {
+const getFilmsLists = async (id_user) => {
     const films = await filmsListsModel.findAll({
-        where: { estado: 1,},
+        where: { estado: 1, id_usuario:id_user},
         order: [["id", "DESC"]]
     });
     return films;

@@ -5,9 +5,10 @@ const FilmsListsApi = (app) => {
     const router = expresss.Router();
     app.use("/films", router);
 
-    router.get("/getFilms", async function (req, res, next) {
+    router.get("/getFilms/:id_user", async function (req, res, next) {
+        const { id_user } = req.params;
         try {
-            const films = await filmsListsService.getFilmsLists();
+            const films = await filmsListsService.getFilmsLists(id_user);
 
             res.status(200).json({
                 films,
